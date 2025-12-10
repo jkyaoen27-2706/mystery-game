@@ -31,13 +31,28 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        
+      # ----------------------------------------------------
+      # --- NEW STEP: SECURE API KEY INJECTION ---
+      # ----------------------------------------------------
+      - name: Inject API Key
+        # This command finds the placeholder 'JEKYLL_PLACEHOLDER_API_KEY' 
+        # in the mystery-generator.js file and replaces it with the secure secret 
+        # stored in your repository.
+        run: |
+          sed -i "s|JEKYLL_PLACEHOLDER_API_KEY|${{ secrets.GEMINI_API_KEY }}|g" mystery-generator.js
+      
+      # ----------------------------------------------------
+      
       - name: Setup Pages
         uses: actions/configure-pages@v5
+        
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload entire repository
+          # Upload entire repository (now containing the key-injected file)
           path: '.'
+          
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
